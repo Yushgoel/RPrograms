@@ -1,0 +1,127 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+library(tidyverse)
+library(highcharter)
+library(corrplot)
+```
+```{r}
+by_cyl = data %>% group_by(SaleCondition)
+a <- by_cyl %>% summarise(
+  SalePrice = count(data)
+)
+```
+```{r}
+c <- as.data.frame(table(data$SaleCondition))
+```
+```{r}
+c
+```
+
+
+
+Row
+-------------------------------------
+
+### Rows In Train
+
+```{r}
+valueBox(nrow(train), icon = "fa-table", color = "rgb(100,200,100)")
+```
+
+### Number of Columns in Train
+```{r}
+valueBox(ncol(train), icon="fas fa-columns", color="rgb(100, 200, 100)")
+```
+
+
+
+```{r}
+highchart() %>% 
+ hc_chart(type = "pie") %>% 
+ hc_add_series_labels_values(labels = c$Var1, values = c$Freq)
+```
+
+```{r}
+data = read_csv('../R/train.csv', col_types = cols())
+```
+```{r}
+by_cyl = data %>% group_by(SaleCondition)
+a <- by_cyl %>% summarise(
+  SalePrice = mean(SalePrice)
+)
+highchart() %>% 
+ hc_chart(type = "pie") %>% 
+ hc_add_series_labels_values(labels = a$SaleCondition, values = a$SalePrice)
+```
+```{r}
+require(highcharter)
+highchart() %>% 
+ hc_chart(type = "pie") %>% 
+ hc_add_series_labels_values(labels = data$SaleCondition, values = count(data$SaleCondition))
+```
+
+
+```{r}
+data %>% 
+filter(!is.na(SaleCondition)) %>% 
+count(SaleCondition) %>%
+hchart('treemap', hcaes(x = 'SaleCondition', value = 'n', color = 'n'))
+```
+
+
+```{r}
+hchart(density(data$SalePrice), type = "area", color = "#FF8B03", name = "Sale Price of House") %>% hc_title(title= "Distribution of House Sale Prices") %>% hc_add_theme(hc_theme_darkunica())
+```
+
+```{r}
+data%>%
+count(Street)%>%
+arrange(n)%>%
+hchart(type = "bar", hcaes(x = Street, y = n))%>% 
+hc_add_theme(hc_theme_ffx())
+```
+
+```{r}
+hchart(data, "scatter", hcaes(x = LotArea, y = GrLivArea))
+```
+
+```{r}
+highchart() %>% 
+hc_chart(type = "column") %>% 
+hc_title(text = "Average Sale Price for Different Sale Conditions") %>% 
+hc_xAxis(categories = c(a$SaleCondition)) %>% 
+hc_add_series(data = c(a$SalePrice),
+name = "Average Sale Price")
+```
+
+```{r}
+hchart(data$SaleCondition, colorByPoint = TRUE, name = "Count")
+```
+
+```{r}
+hchart(data$SalePrice, name = "SalePrice")
+```
+
+```{r}
+nums <- unlist(lapply(data, is.numeric))  
+a = cor(data[, nums], use="complete.obs")
+hchart(a, method=c('number'))
+```
+
+```{r}
+data  %>% 
+  arrange(desc(SalePrice)) %>% 
+  #select(one_of('heroes','youtube_ctr')) %>% 
+  hchart('bubble',hcaes(x = LotArea, y = SalePrice, size = round(GrLivArea / 1000))) %>% 
+  hc_add_theme(hc_theme_monokai()) 
+```
+
+

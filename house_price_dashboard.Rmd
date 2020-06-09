@@ -1,0 +1,43 @@
+---
+title: "Dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+``` {js}
+$('.navbar-inverse').removeClass('navbar-inverse').addClass('navbar-default');
+```
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(data.table)
+library(highcharter)
+
+data <- fread('../R/train.csv')
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+valueBox(nrow(data), icon = "fa-table", color = "rgb(100,200,100)")
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+valueBox(ncol(data) - 2, icon = "fa-table", color = "rgb(100,200,100)")
+```
+
+### Chart C
+
+```{r}
+data$SalePrice
+```
+
